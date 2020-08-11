@@ -1,0 +1,48 @@
+const { subjects, weekdays, getSubject } = require("./utils/format");
+
+function pageLanding(req, res) { //Seta uma rota de requisição e resposta com o .get()
+    return res.render("index.html");
+}
+
+function pageStudy(req, res) { 
+    const filters = req.query;
+    return res.render("study.html", {proffys, filters, subjects, weekdays});
+}
+
+function giveClasses(req, res) {
+    const data = req.query;
+
+    const isNotEmpty = Object.keys(data).length > 0;
+    if(isNotEmpty){
+        
+        data.subject = getSubject(data.subject)
+        //adicionar dados a lista de proffys
+        proffys.push(data)
+        return res.redirect("/study");
+    }
+    return res.render("give-classes.html", {subjects, weekdays});
+}
+
+//Servidor
+const express = require('express') //importa a biblioteca do servidor
+const server = express(); //Variável que roda o express;
+
+//Configurar nunjucks (template engine)
+const nunjucks = require('nunjucks');
+                    //Pasta dos arquivos HTML
+nunjucks.configure('src/views', {
+    //Setando servidor em um objeto
+    express: server,
+    noCache: true, //Desativa o cache
+})
+
+//Início e configuração do servidor
+server
+//Configurar arquivos estáticos
+.use(express.static("public")) 
+//Rotas de aplicação
+.get("/", pageLanding)
+.get("/study", pageStudy)
+.get("/give-classes", giveClasses)
+//Start do servidor
+.listen(5500); 
